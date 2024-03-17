@@ -185,7 +185,7 @@ class IMDbCrawler:
         futures = []
         crawled_counter = 0
 
-        with ThreadPoolExecutor(max_workers=10) as executor:
+        with ThreadPoolExecutor(max_workers=20) as executor:
             while crawled_counter < self.crawling_threshold:
 
                 self.ncrawled_lock.acquire()
@@ -351,7 +351,11 @@ class IMDbCrawler:
             The first page summary of the movie
         """
         try:
-            return data.get('description')
+            res = data.get('description')
+            if res:
+                return res
+            else:
+                return 'N/A'
         except:
             print("failed to get first page summary")
             return 'N/A'
