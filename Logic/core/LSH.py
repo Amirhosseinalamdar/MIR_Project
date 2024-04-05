@@ -1,7 +1,7 @@
 import numpy as np
 import itertools
 import random
-
+from random import shuffle
 
 class MinHashLSH:
     def __init__(self, documents, num_hashes):
@@ -34,7 +34,11 @@ class MinHashLSH:
         set
             A set of shingles.
         """
-        shingles = None
+        shingles = set()
+        # can just do shingling on the raw sentence and not splitting the words TODO later
+        doc = document.split()
+        for i in range(len(doc) - k + 1):
+            shingles.add(' '.join(doc[i:i+k]))
         return shingles
 
     def build_characteristic_matrix(self):
@@ -46,8 +50,23 @@ class MinHashLSH:
         numpy.ndarray
             The binary characteristic matrix.
         """
-        # TODO
-        return
+        shingles_lst = []
+        all_shingles = set()
+        for doc in self.documents:
+            shingles =self.shingle_document(doc)
+            all_shingles = all_shingles.union(shingles)
+            shingles_lst.append(shingles)
+
+        N = len(all_shingles)
+        M = len(self.documents)
+        matrix = np.zeros((N, M), dtype=int)
+
+        for i, sh in enumerate(all_shingles):
+            for j, shingles_set in enumerate(shingles_lst):
+                if sh in shingles_set:
+                    matrix[i, j] = 1
+        
+        return matrix
 
     def min_hash_signature(self):
         """
@@ -58,8 +77,18 @@ class MinHashLSH:
         numpy.ndarray
             The Min-Hash signatures matrix.
         """
-        # TODO
-        return
+        
+        matrix = self.build_characteristic_matrix()
+        sig_matrix = np.zeros((self.num_hashes, matrix.shape[1]), dtype=int)
+        for idx in range(self.num_hashes):
+            hash_ex = list(range(len(matrix.shape[0])))
+            random.shuffle(hash_ex)
+            for i in range(len(matrix.shape[1])): # columns ~ each doc
+                for j in range(len(hash_ex)): # rows
+                    if matrix[j, i] == 1: 
+                        sig_matrix[idx, i] = j #TODO
+                    
+        return sig_matrix
 
     def lsh_buckets(self, signature, bands=10, rows_per_band=10):
         """
@@ -79,8 +108,14 @@ class MinHashLSH:
         dict
             A dictionary mapping bucket IDs to lists of document indices.
         """
-        # TODO
-        return
+        buckets = {}
+        for band_idx in range(bands):
+            band = signature[band_idx * rows_per_band : (band_idx + 1) * rows_per_band, :]
+            band_transpose = band.T
+            for dox_idx, row in enumerate(band_transpose):
+                buckets.setdefault(hash((tuple(row), band_idx)), []).append(dox_idx)
+        
+        return buckets 
 
     def perform_lsh(self):
         """
@@ -91,8 +126,8 @@ class MinHashLSH:
         dict
             A dictionary mapping bucket IDs to lists of document indices.
         """
-        # TODO
-        return
+        sig_mat = self.min_hash_signature()
+        return self.lsh_buckets(sig_mat)
 
     def jaccard_score(self, first_set, second_set):
         """
@@ -110,8 +145,11 @@ class MinHashLSH:
         float
             Jaccard score.
         """
-        # TODO
-        pass
+        intersection = len(first_set.intersection(second_set))
+        union = len(first_set.union(second_set))
+        jaccard_score = intersection / union if union != 0 else 0.0
+        return jaccard_score
+
 
     def jaccard_similarity_test(self, buckets, all_documents):
         """
