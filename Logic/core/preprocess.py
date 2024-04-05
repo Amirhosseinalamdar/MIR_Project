@@ -36,7 +36,7 @@ class Preprocessor:
         prep = []
         for doc in self.docs:
             doc = self.remove_links(doc)
-            doc = self.remove_puctuations(doc)
+            doc = self.remove_punctuations(doc)
             doc = self.normalize(doc)
             prep.append(doc)
             
