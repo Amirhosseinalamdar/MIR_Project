@@ -19,11 +19,7 @@ This class is responsible for doing preprocessings required on the input data. T
 
 Using prebuilt libraries for stopwords is an option, but it can be slow to process large amounts of text. For faster performance, we have prepared a `stopword.txt` file containing common stopwords that you can use instead. The stopwords file allows preprocessing to be completed more efficiently by removing common, non-informative words from the text before further analysis.
 
-<<<<<<< HEAD
-## 4. [Indexing](./core/index.py)
-=======
 ## 4. [Indexing](./core/indexer/index.py)
->>>>>>> template/main
 This class is responsible for building index. Its input is preprocessed data and the output is indexes required for searching. This section will be used in next phases and the functions will be used for information retrieval.
 
 - `check_add_remove_is_correct` method is used to test if your add and remove methods are correct or not. You should run this method and see if your add and remove methods are correct.
@@ -36,11 +32,6 @@ Report the results to us.
 
 - **Note** that one or many of the methods (or signatures of methods) in this class may need to be changed based on your implementations. Feel free to do so!
 
-<<<<<<< HEAD
-## 5. [Utils](./utils.py)
-
-This file contains functions that is needed by UI to do some of the important functionalities. For now, you should complete the `clean_text` function that is used by UI to do the pre-processing operations that you implemented in `Preprocessor` class, on the input query by user.  You can **test** your implementation by running the UI, and giving different inputs and see that how is it being corrected (or actually, being cleaned! so it can be used better as we proceed in the project).
-=======
 ## 5. [Spell Correction](./core/spell_correction.py)
 In this file, you have a class for the spell correction task. You must implement the shingling and Jaccard similarity approach for this task, aiming to correct misspelled words in the query. Additionally, integrate the Term Frequency (TF) of the token into your candidate selection. For instance, if you input `whle`, both `while` and `whale` should be considered as candidates with the same score. However, it is more likely that the user intended to enter `while`. Therefore, enhance your spell correction module by adding a normalized TF score. Achieve this by dividing the TF of the top 5 candidates by the maximum TF of the top 5 candidates and multiplying this normalized TF by the Jaccard score. In the UI component of your project, present these probable corrections to the user in case there are any mistakes in the query.
 
@@ -65,4 +56,3 @@ Each metric makes use of the actual relevant items and the predicted ranking to 
 
 Together, these metrics provide a more complete picture of how well the system is able to accurately retrieve and highly rank relevant information.
 
->>>>>>> template/main

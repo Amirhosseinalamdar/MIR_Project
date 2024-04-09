@@ -12,17 +12,19 @@ class Metadata_index:
         path : str
             The path to the indexes.
         """
-        
-        #TODO
+        self.docs_index = Index_reader(path, Indexes.DOCUMENTS)
+        self.read_documents()
+        self.metadata_index = self.create_metadata_index()
 
     def read_documents(self):
         """
         Reads the documents.
         
         """
-
-        #TODO
-
+        self.documents = []
+        for doc in self.docs_index.index.values():
+            self.documents.append(doc)
+        
     def create_metadata_index(self):    
         """
         Creates the metadata index.
@@ -37,7 +39,7 @@ class Metadata_index:
 
         return metadata_index
     
-    def get_average_document_field_length(self,where):
+    def get_average_document_field_length(self, where):
         """
         Returns the sum of the field lengths of all documents in the index.
 
@@ -46,8 +48,12 @@ class Metadata_index:
         where : str
             The field to get the document lengths for.
         """
-
-        #TODO
+        sum =0
+        for doc in self.documents:
+            for word_set in doc[where]:
+                sum += len(word_set.split())
+        
+        return sum / len(self.documents) 
 
     def store_metadata_index(self, path):
         """
@@ -66,3 +72,4 @@ class Metadata_index:
     
 if __name__ == "__main__":
     meta_index = Metadata_index()
+    meta_index.store_metadata_index('index/')

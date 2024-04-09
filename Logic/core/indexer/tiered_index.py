@@ -1,5 +1,5 @@
-from .indexes_enum import Indexes, Index_types
-from .index_reader import Index_reader
+from indexes_enum import Indexes, Index_types
+from index_reader import Index_reader
 import json
 
 
@@ -28,6 +28,14 @@ class Tiered_index:
         self.store_tiered_index(path, Indexes.STARS)
         self.store_tiered_index(path, Indexes.SUMMARIES)
         self.store_tiered_index(path, Indexes.GENRES)
+
+
+    def increment_default(self, dictionary: dict, term: str, doc_id: str, value:int):
+        if term not in dictionary:
+            dictionary[term] = {}
+        if doc_id not in dictionary[term]:
+            dictionary[term][doc_id] = 0
+        dictionary[term][doc_id] += value
 
     def convert_to_tiered_index(
         self, first_tier_threshold: int, second_tier_threshold: int, index_name
@@ -61,7 +69,16 @@ class Tiered_index:
         first_tier = {}
         second_tier = {}
         third_tier = {}
-        #TODO
+        
+        for term in current_index:
+            for doc_id in current_index[term]:
+                if current_index[term][doc_id] >= first_tier_threshold:
+                    self.increment_default(first_tier, term, doc_id, current_index[term][doc_id])
+                elif current_index[term][doc_id] >= second_tier_threshold:
+                    self.increment_default(second_tier, term, doc_id, current_index[term][doc_id])
+                else:
+                    self.increment_default(third_tier, term, doc_id, current_index[term][doc_id])
+
         return {
             "first_tier": first_tier,
             "second_tier": second_tier,

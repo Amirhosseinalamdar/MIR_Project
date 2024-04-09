@@ -1,3 +1,4 @@
+import numpy as np
 class Snippet:
     def __init__(self, number_of_words_on_each_side=5):
         """
@@ -8,9 +9,9 @@ class Snippet:
         number_of_words_on_each_side : int
             The number of words on each side of the query word in the doc to be presented in the snippet.
         """
-        self.number_of_words_on_each_side = number_of_words_on_each_side
+        self.n = number_of_words_on_each_side
 
-    def remove_stop_words_from_query(self, query):
+    def remove_stop_words_from_query(self, query, path = './stopwords.txt'):
         """
         Remove stop words from the input string.
 
@@ -24,10 +25,13 @@ class Snippet:
         str
             The query without stop words.
         """
-
-        # TODO: remove stop words from the query.
-
-        return
+        stopwords = []
+        
+        with open(path, 'r') as file:
+            for line in file:
+                stopwords.append(line.strip())
+        query = [word for word in query.split() if word not in stopwords]
+        return ' '.join(query)
 
     def find_snippet(self, doc, query):
         """
@@ -48,9 +52,34 @@ class Snippet:
         not_exist_words : list
             Words in the query which don't exist in the doc.
         """
+        # Have removed stopwords from query in this method
+        query = self.remove_stop_words_from_query(query)
         final_snippet = ""
         not_exist_words = []
+        snippets = []
+        query_lst = query.split()
+        doc_lst = doc.split()
 
-        # TODO: Extract snippet and the tokens which are not present in the doc.
+        if len(doc.split()) < 2*self.n + 1:
+            return None, None #TODO JEEZ
 
+        for qw in query_lst:
+            if qw in doc_lst:
+                index = doc_lst.index(qw)
+                if index < self.n:
+                    curr = doc_lst[:index+self.n+1]
+                elif len(doc_lst)-index <= self.n:
+                    curr = doc_lst[index-self.n:]
+                else:
+                    curr = doc_lst[index-self.n:index+self.n+1]
+                index = curr.index(qw)
+                curr[index] = '***'+curr[index]+'***'
+                snippets.append(' '.join(curr))
+            else:
+                not_exist_words.append(qw)
+
+        final_snippet = '...'.join(snippets)
         return final_snippet, not_exist_words
+
+
+# VALIDATED
