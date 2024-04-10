@@ -1,0 +1,128 @@
+{
+    "os": "Linux-6.2.0-36-generic-x86_64-with-glibc2.35",
+    "python": "3.10.12",
+    "heartbeatAt": "2024-04-10T17:28:11.630312",
+    "startedAt": "2024-04-10T17:28:10.357130",
+    "docker": null,
+    "cuda": null,
+    "args": [],
+    "state": "running",
+    "program": "/home/amirhossein/Desktop/retrival/MIR_Project/Logic/core/utility/evaluation.py",
+    "codePathLocal": "utility/evaluation.py",
+    "codePath": "Logic/core/utility/evaluation.py",
+    "git": {
+        "remote": "https://github.com/Amirhosseinalamdar/MIR_Project.git",
+        "commit": "5e4ab23ade75d67f0d255cd3de74fe183eaec8a4"
+    },
+    "email": "ah.alamdar546@gmail.com",
+    "root": "/home/amirhossein/Desktop/retrival/MIR_Project",
+    "host": "amirhossein-Legion-5-15ACH6",
+    "username": "amirhossein",
+    "executable": "/usr/bin/python3",
+    "cpu_count": 8,
+    "cpu_count_logical": 16,
+    "cpu_freq": {
+        "current": 4158.18875,
+        "min": 1200.0,
+        "max": 3200.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 4195.082,
+            "min": 1200.0,
+            "max": 3200.0
+        },
+        {
+            "current": 3691.354,
+            "min": 1200.0,
+            "max": 3200.0
+        },
+        {
+            "current": 4200.569,
+            "min": 1200.0,
+            "max": 3200.0
+        },
+        {
+            "current": 4204.943,
+            "min": 1200.0,
+            "max": 3200.0
+        },
+        {
+            "current": 4199.594,
+            "min": 1200.0,
+            "max": 3200.0
+        },
+        {
+            "current": 4150.765,
+            "min": 1200.0,
+            "max": 3200.0
+        },
+        {
+            "current": 4203.374,
+            "min": 1200.0,
+            "max": 3200.0
+        },
+        {
+            "current": 4200.735,
+            "min": 1200.0,
+            "max": 3200.0
+        },
+        {
+            "current": 4195.781,
+            "min": 1200.0,
+            "max": 3200.0
+        },
+        {
+            "current": 4192.514,
+            "min": 1200.0,
+            "max": 3200.0
+        },
+        {
+            "current": 4208.997,
+            "min": 1200.0,
+            "max": 3200.0
+        },
+        {
+            "current": 4196.307,
+            "min": 1200.0,
+            "max": 3200.0
+        },
+        {
+            "current": 4186.67,
+            "min": 1200.0,
+            "max": 3200.0
+        },
+        {
+            "current": 3991.893,
+            "min": 1200.0,
+            "max": 3200.0
+        },
+        {
+            "current": 4203.495,
+            "min": 1200.0,
+            "max": 3200.0
+        },
+        {
+            "current": 4195.93,
+            "min": 1200.0,
+            "max": 3200.0
+        }
+    ],
+    "disk": {
+        "/": {
+            "total": 77.13887786865234,
+            "used": 60.128360748291016
+        }
+    },
+    "gpu": "NVIDIA GeForce RTX 3050 Ti Laptop GPU",
+    "gpu_count": 1,
+    "gpu_devices": [
+        {
+            "name": "NVIDIA GeForce RTX 3050 Ti Laptop GPU",
+            "memory_total": 4294967296
+        }
+    ],
+    "memory": {
+        "total": 13.494380950927734
+    }
+}

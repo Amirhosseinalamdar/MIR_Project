@@ -37,7 +37,11 @@ class Builder():
     def read_json(self):
         with open(self.path, "r") as f:
             all_objects = json.load(f)
-            objects = all_objects[:self.data_amount]
+            if self.data_amount == -1:
+                objects = all_objects
+            else:
+                objects = all_objects[:self.data_amount]
+
         return objects
 
     def preprocess_objects(self, objects: list, type: str):
@@ -47,6 +51,6 @@ class Builder():
     
 
 
-Builder()
+Builder(data_amount=-1)
 
 

@@ -67,7 +67,7 @@ class SearchEngine:
         final_scores = {}
 
         self.aggregate_scores(weights, scores, final_scores)
-        
+        # print(len(final_scores))
         result = sorted(final_scores.items(), key=lambda x: x[1], reverse=True)
         if max_results is not None:
             result = result[:max_results]
@@ -108,10 +108,26 @@ class SearchEngine:
         scores : dict
             The scores of the documents.
         """
-        for field in weights:
-            for tier in ["first_tier", "second_tier", "third_tier"]:
-                #TODO
-                pass
+        tmp = {}
+        for tier in ["first_tier", "second_tier", "third_tier"]:
+            # print(tier)
+            key_set = set()
+            for field in weights:
+                sc = Scorer(self.tiered_index[field][tier], self.metadata_index['document_count'])
+                if method =='OkapiBM25':
+                    tmp[field] = sc.compute_scores_with_okapi_bm25(query, self.metadata_index['averge_document_length'][field.value], self.document_lengths_index[field])
+                else:
+                    tmp[field] = sc.compute_scores_with_vector_space_model(query, method)
+
+                if field not in scores:
+                    scores[field] = {}
+                self.merge_scores(scores[field], tmp[field], weights[field])
+                key_set.update(list(scores[field].keys()))
+
+            if len(key_set) >= max_results:
+                break
+        
+
 
     def find_scores_with_safe_ranking(self, query, method, weights, scores):
         """
@@ -164,20 +180,36 @@ class SearchEngine:
 
 if __name__ == '__main__':
     search_engine = SearchEngine()
-    query = "spider man in wonderland brad pittt"
+    query = "spider man"
     method = "lnc.ltc"
     weights = {
         Indexes.STARS: 1,
         Indexes.GENRES: 1,
         Indexes.SUMMARIES: 1
     }
-    result = search_engine.search(query, method, weights)
+    # result = search_engine.search(query, method, weights)
 
-    print(result)
+    # print(result)
 
-    docs_id_index = Index_reader('./indexer/index/', Indexes.DOCUMENTS).index
-    print(docs_id_index[result[0][0]][Indexes.SUMMARIES.value])
+    # docs_id_index = Index_reader('../Logic/core/indexer/index/', Indexes.DOCUMENTS).index
+    # print(docs_id_index[result[0][0]][Indexes.SUMMARIES.value])
 
-    query = 'redemption master'
-    result = search_engine.search(query, method, weights)
-    print(docs_id_index[result[0][0]][Indexes.SUMMARIES.value])
+    # query = 'good'
+    # result = search_engine.search(query, method, weights)
+    # print(docs_id_index[result[0][0]][Indexes.SUMMARIES.value])
+    
+    queries = ['spiderman', 'batman', 'master', 'man', 'shawshank', 'hero', 'father', 'future', 'pain', 'meal']
+    res = {}
+    for query in queries:
+        res[query] = []
+        lst = search_engine.search(query, 'OkapiBM25', weights)
+        for el in lst:
+            res[query].append(el[0])
+
+    
+    file_path = '../Logic/core/utility/search_data.json'
+    with open(file_path, "w") as json_file:
+        json.dump(res, json_file)
+
+
+  

@@ -85,20 +85,21 @@ class MinHashLSH:
         """
         
         matrix = self.build_characteristic_matrix()
-        # print(matrix.shape[0])
-        sig_matrix = np.zeros((self.num_hashes, matrix.shape[1]), dtype=int)
-        for idx in range(self.num_hashes):
-            hash_ex = list(range(matrix.shape[0]))
-            random.shuffle(hash_ex)
-            for i in range(matrix.shape[1]): # columns ~ each doc
-                for j in range(len(hash_ex)): # rows
-                    # j = random.randint(0, matrix.shape[0]-1)
-                    if matrix[j, i] == 1: 
-                        sig_matrix[idx, i] = j #TODO
-                    
-        return sig_matrix
+        
+        sig_matrix = np.full((self.num_hashes, matrix.shape[1]), np.inf)
+        hash_functions = [np.random.permutation(matrix.shape[0]) for _ in range(self.num_hashes)]
+        
+        for doc in range(matrix.shape[1]):
+            for j, hash in enumerate(hash_functions):
+                tmp = np.where(matrix[hash, doc]==1)[0]
+                if len(tmp) > 0:
+                    sig_matrix[j, doc] = min(np.where(matrix[hash, doc]==1)[0])
 
-    def lsh_buckets(self, signature, bands=24, rows_per_band=16):
+        return sig_matrix
+    
+  
+
+    def lsh_buckets(self, signature, bands= 10, rows_per_band=10):
         """
         Group documents into Locality-Sensitive Hashing (LSH) buckets based on Min-Hash signatures.
 
@@ -221,7 +222,7 @@ docs = []
 for movie in loaded_list:
     docs.append(' '.join(movie['summaries']))
 
-lsh = MinHashLSH(docs[:100], 16*24)
+lsh = MinHashLSH(docs[:100],  100)
 
 buckets = lsh.perform_lsh()
 
