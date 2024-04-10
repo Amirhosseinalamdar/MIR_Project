@@ -1,4 +1,5 @@
 import numpy as np
+from .preprocess import Preprocessor 
 class Snippet:
     def __init__(self, number_of_words_on_each_side=5):
         """
@@ -11,7 +12,7 @@ class Snippet:
         """
         self.n = number_of_words_on_each_side
 
-    def remove_stop_words_from_query(self, query, path = './stopwords.txt'):
+    def remove_stop_words_from_query(self, query, path = '../Logic/core/stopwords.txt'):
         """
         Remove stop words from the input string.
 
@@ -26,13 +27,12 @@ class Snippet:
             The query without stop words.
         """
         stopwords = []
-        
         with open(path, 'r') as file:
             for line in file:
                 stopwords.append(line.strip())
         query = [word for word in query.split() if word not in stopwords]
         return ' '.join(query)
-
+        # return query
     def find_snippet(self, doc, query):
         """
         Find snippet in a doc based on a query.
@@ -57,26 +57,32 @@ class Snippet:
         final_snippet = ""
         not_exist_words = []
         snippets = []
+        
+        query = Preprocessor([query]).preprocess()[0]
         query_lst = query.split()
-        doc_lst = doc.split()
-
+        prep_doc = doc
+        doc_lst = prep_doc.split()
+        
         if len(doc.split()) < 2*self.n + 1:
             return None, None #TODO JEEZ
 
         for qw in query_lst:
-            if qw in doc_lst:
-                index = doc_lst.index(qw)
-                if index < self.n:
-                    curr = doc_lst[:index+self.n+1]
-                elif len(doc_lst)-index <= self.n:
-                    curr = doc_lst[index-self.n:]
+            for idx, word in enumerate(doc_lst):
+                if qw in word:
+                    index = idx
+                    if index < self.n:
+                        curr = doc_lst[:index+self.n+1]
+                    elif len(doc_lst)-index <= self.n:
+                        curr = doc_lst[index-self.n:]
+                    else:
+                        curr = doc_lst[index-self.n:index+self.n+1]
+                    for idxx, w in enumerate(curr):
+                        if qw in w:
+                            index = idxx
+                    curr[index] = '***'+curr[index]+'***'
+                    snippets.append(' '.join(curr))
                 else:
-                    curr = doc_lst[index-self.n:index+self.n+1]
-                index = curr.index(qw)
-                curr[index] = '***'+curr[index]+'***'
-                snippets.append(' '.join(curr))
-            else:
-                not_exist_words.append(qw)
+                    not_exist_words.append(qw)
 
         final_snippet = '...'.join(snippets)
         return final_snippet, not_exist_words

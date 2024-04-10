@@ -2,8 +2,8 @@ import json
 import numpy as np
 from .preprocess import Preprocessor
 from .scorer import Scorer
-from .indexes_enum import Indexes, Index_types
-from .index_reader import Index_reader
+from .indexer.indexes_enum import Indexes, Index_types
+from .indexer.index_reader import Index_reader
 
 
 class SearchEngine:
@@ -12,24 +12,25 @@ class SearchEngine:
         Initializes the search engine.
 
         """
-        path = '/index'
+        path = '../Logic/core/indexer/index/'
         self.document_indexes = {
-            Indexes.STARS: Index_reader(path, Indexes.STARS),
-            Indexes.GENRES: Index_reader(path, Indexes.GENRES),
-            Indexes.SUMMARIES: Index_reader(path, Indexes.SUMMARIES)
+            Indexes.STARS: Index_reader(path, Indexes.STARS).index,
+            Indexes.GENRES: Index_reader(path, Indexes.GENRES).index,
+            Indexes.SUMMARIES: Index_reader(path, Indexes.SUMMARIES).index
         }
         self.tiered_index = {
-            Indexes.STARS: Index_reader(path, Indexes.STARS, Index_types.TIERED),
-            Indexes.GENRES: Index_reader(path, Indexes.GENRES, Index_types.TIERED),
-            Indexes.SUMMARIES: Index_reader(path, Indexes.SUMMARIES, Index_types.TIERED)
+            Indexes.STARS: Index_reader(path, Indexes.STARS, Index_types.TIERED).index,
+            Indexes.GENRES: Index_reader(path, Indexes.GENRES, Index_types.TIERED).index,
+            Indexes.SUMMARIES: Index_reader(path, Indexes.SUMMARIES, Index_types.TIERED).index
         }
         self.document_lengths_index = {
-            Indexes.STARS: Index_reader(path, Indexes.STARS, Index_types.DOCUMENT_LENGTH),
-            Indexes.GENRES: Index_reader(path, Indexes.GENRES, Index_types.DOCUMENT_LENGTH),
-            Indexes.SUMMARIES: Index_reader(path, Indexes.SUMMARIES, Index_types.DOCUMENT_LENGTH)
+            Indexes.STARS: Index_reader(path, Indexes.STARS, Index_types.DOCUMENT_LENGTH).index,
+            Indexes.GENRES: Index_reader(path, Indexes.GENRES, Index_types.DOCUMENT_LENGTH).index,
+            Indexes.SUMMARIES: Index_reader(path, Indexes.SUMMARIES, Index_types.DOCUMENT_LENGTH).index
         }
-        self.metadata_index = Index_reader(path, Indexes.DOCUMENTS, Index_types.METADATA)
-
+        self.metadata_index = Index_reader(path, Indexes.DOCUMENTS, Index_types.METADATA).index
+        
+        
     def search(self, query, method, weights, safe_ranking = True, max_results=10):
         """
         searches for the query in the indexes.
@@ -56,7 +57,7 @@ class SearchEngine:
 
         preprocessor = Preprocessor([query])
         query = preprocessor.preprocess()[0].split()
-
+        
         scores = {}
         if safe_ranking:
             self.find_scores_with_safe_ranking(query, method, weights, scores)
@@ -86,8 +87,9 @@ class SearchEngine:
         final_scores : dict
             The final scores of the documents.
         """
-        # TODO
-        pass
+        for field in weights:
+            self.merge_scores(final_scores, scores[field], weights[field])
+        
 
     def find_scores_with_unsafe_ranking(self, query, method, weights, max_results, scores):
         """
@@ -126,12 +128,16 @@ class SearchEngine:
         scores : dict
             The scores of the documents.
         """
-
+        
         for field in weights:
-            #TODO
-            pass
+            sc = Scorer(self.document_indexes[field], self.metadata_index['document_count'])
+            if method == 'OkapiBM25':
+                scores[field] = sc.compute_scores_with_okapi_bm25(query, self.metadata_index['averge_document_length'][field.value], self.document_lengths_index[field])
+            else:
+                scores[field] = sc.compute_scores_with_vector_space_model(query, method)
 
-    def merge_scores(self, scores1, scores2):
+            
+    def merge_scores(self, current, new, w):
         """
         Merges two dictionaries of scores.
 
@@ -147,13 +153,18 @@ class SearchEngine:
         dict
             The merged dictionary of scores.
         """
-
-        #TODO
+        
+        for key in new:
+            if key not in current:
+                current[key] = 0
+            current[key] += new[key] * w
+            
+        
 
 
 if __name__ == '__main__':
     search_engine = SearchEngine()
-    query = "spider man in wonderland"
+    query = "spider man in wonderland brad pittt"
     method = "lnc.ltc"
     weights = {
         Indexes.STARS: 1,
@@ -163,3 +174,10 @@ if __name__ == '__main__':
     result = search_engine.search(query, method, weights)
 
     print(result)
+
+    docs_id_index = Index_reader('./indexer/index/', Indexes.DOCUMENTS).index
+    print(docs_id_index[result[0][0]][Indexes.SUMMARIES.value])
+
+    query = 'redemption master'
+    result = search_engine.search(query, method, weights)
+    print(docs_id_index[result[0][0]][Indexes.SUMMARIES.value])

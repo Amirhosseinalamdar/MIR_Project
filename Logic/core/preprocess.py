@@ -1,10 +1,12 @@
 import re
 import nltk
 from nltk.stem import WordNetLemmatizer
+import spacy
+from nltk.stem import PorterStemmer
 
 class Preprocessor:
 
-    def __init__(self, documents: list, path='./stopwords.txt'):
+    def __init__(self, documents: list, path='../Logic/core/stopwords.txt'):
         """
         Initialize the class.
 
@@ -16,6 +18,8 @@ class Preprocessor:
         # TODO
         self.documents = documents
         self.stopwords = []
+        # self.nlp = spacy.load('en_core_web_sm')
+        self.stemmer = PorterStemmer()
 
         with open(path, 'r') as file:
             for line in file:
@@ -34,10 +38,10 @@ class Preprocessor:
         #  2 remove puncts
         #  3 normalize
         prep = []
-        for doc in self.docs:
+        for doc in self.documents:
             doc = self.remove_links(doc)
             doc = self.remove_punctuations(doc)
-            doc = self.normalize(doc)
+            doc = self.normalize(doc) #lower, remove stop words, lemmatize
             prep.append(doc)
             
         return prep
@@ -59,9 +63,11 @@ class Preprocessor:
         # to lowercase and remove stop words and do lemmatization
         text =text.lower()
         tokens = self.remove_stopwords(text)
-
-        lemmatizer = WordNetLemmatizer()
-        lemmatized_tokens = [lemmatizer.lemmatize(token) for token in tokens]
+        
+        # doc = self.nlp(text)
+        # lemmatized_tokens = [token.lemma_ for token in doc]
+ 
+        lemmatized_tokens = [self.stemmer.stem(word) for word in tokens]
 
         return ' '.join(lemmatized_tokens)
 
@@ -85,7 +91,7 @@ class Preprocessor:
         compiled_patterns = [re.compile(pattern) for pattern in patterns]
         cleaned_text = text
         for pattern in compiled_patterns:
-            cleaned_text = pattern.sub('', cleaned_text)
+            cleaned_text = pattern.sub(' ', cleaned_text)
         
         return cleaned_text
 
@@ -105,7 +111,7 @@ class Preprocessor:
             The text with punctuations removed.
         """
         punctuation_pattern = r'[^\w\s]'  
-        return re.sub(punctuation_pattern, ' ', text)
+        return re.sub(punctuation_pattern, '', text)
 
     def tokenize(self, text: str):
         """

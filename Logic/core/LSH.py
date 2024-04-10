@@ -3,6 +3,8 @@ import itertools
 import random
 from random import shuffle
 
+import json
+
 class MinHashLSH:
     def __init__(self, documents, num_hashes):
         """
@@ -40,6 +42,10 @@ class MinHashLSH:
         for i in range(len(doc) - k + 1):
             shingles.add(' '.join(doc[i:i+k]))
         return shingles
+
+        # for i in range(len(document) - k + 1):
+        #     shingles.add(document[i:i+k])
+        # return shingles
 
     def build_characteristic_matrix(self):
         """
@@ -79,18 +85,20 @@ class MinHashLSH:
         """
         
         matrix = self.build_characteristic_matrix()
+        # print(matrix.shape[0])
         sig_matrix = np.zeros((self.num_hashes, matrix.shape[1]), dtype=int)
         for idx in range(self.num_hashes):
-            hash_ex = list(range(len(matrix.shape[0])))
+            hash_ex = list(range(matrix.shape[0]))
             random.shuffle(hash_ex)
-            for i in range(len(matrix.shape[1])): # columns ~ each doc
+            for i in range(matrix.shape[1]): # columns ~ each doc
                 for j in range(len(hash_ex)): # rows
+                    # j = random.randint(0, matrix.shape[0]-1)
                     if matrix[j, i] == 1: 
                         sig_matrix[idx, i] = j #TODO
                     
         return sig_matrix
 
-    def lsh_buckets(self, signature, bands=10, rows_per_band=10):
+    def lsh_buckets(self, signature, bands=24, rows_per_band=16):
         """
         Group documents into Locality-Sensitive Hashing (LSH) buckets based on Min-Hash signatures.
 
@@ -198,3 +206,23 @@ class MinHashLSH:
 
         # a good score is around 0.8
         print("your final score in near duplicate detection:", correct_near_duplicates / all_near_duplicates)
+
+
+
+file_path = "LSHFakeData.json"
+with open(file_path, "r") as json_file:
+    loaded_list = json.load(json_file)
+
+with open('../IMDB_crawled.json', "r") as json_file:
+    loaded_list.extend(json.load(json_file))
+
+
+docs = []
+for movie in loaded_list:
+    docs.append(' '.join(movie['summaries']))
+
+lsh = MinHashLSH(docs[:100], 16*24)
+
+buckets = lsh.perform_lsh()
+
+lsh.jaccard_similarity_test(buckets, docs)

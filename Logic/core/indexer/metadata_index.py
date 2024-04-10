@@ -1,9 +1,9 @@
-from index_reader import Index_reader
-from indexes_enum import Indexes, Index_types
+from .index_reader import Index_reader
+from .indexes_enum import Indexes, Index_types
 import json
 
 class Metadata_index:
-    def __init__(self, path='index/'):
+    def __init__(self, path='../Logic/core/indexer/index/'):
         """
         Initializes the Metadata_index.
 
@@ -70,6 +70,6 @@ class Metadata_index:
 
 
     
-if __name__ == "__main__":
-    meta_index = Metadata_index()
-    meta_index.store_metadata_index('index/')
+# if __name__ == "__main__":
+#     meta_index = Metadata_index()
+#     meta_index.store_metadata_index('index/')

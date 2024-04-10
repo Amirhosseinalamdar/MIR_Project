@@ -1,6 +1,6 @@
 import numpy as np
-from indexer.index_reader import Index_reader
-from indexer.indexes_enum import Indexes, Index_types
+from .indexer.index_reader import Index_reader
+from .indexer.indexes_enum import Indexes, Index_types
 class Scorer:    
     def __init__(self, index, number_of_documents):
         """
@@ -66,7 +66,11 @@ class Scorer:
         """
         idf = self.idf.get(term, None)
         if idf is None:
-            self.idf[term] = len(self.index[term]) # TODO what if new term
+            if term in self.index:
+                self.idf[term] = len(self.index[term]) # TODO what if new term
+            else: 
+                self.idf[term] = 0.1
+
             idf = self.idf[term]
         return idf
     
@@ -146,8 +150,8 @@ class Scorer:
             q = q * idf_multiplier
         
         if method[6] == 'c':
-            # print(q.sum())
-            q = q / np.linalg.norm(q)
+            if q.sum() > 0:
+                q = q / np.linalg.norm(q)
 
         scores = (q @ X).tolist()
 
@@ -210,6 +214,8 @@ class Scorer:
 
         X = np.zeros((len(query), len(doc_id_list)), dtype = float)
         for i, term in enumerate(query):
+            if term not in self.index:
+                continue
             for j, doc_id in enumerate(doc_id_list):
                 if doc_id in self.index[term]:
                     X[i, j] = self.okapi_score_tf(self.index[term][doc_id], document_lengths[doc_id] / average_document_field_length)
@@ -246,21 +252,22 @@ class Scorer:
 
 # ================================ = = = = = = = = = = = = = = =====================================
 
-docs_index = Index_reader('./indexer/index/', Indexes.SUMMARIES).index
-docs_id_index = Index_reader('./indexer/index/', Indexes.DOCUMENTS).index
-doc_len = Index_reader('./indexer/index/', Indexes.SUMMARIES, Index_types.DOCUMENT_LENGTH).index
+# docs_index = Index_reader('./indexer/index/', Indexes.SUMMARIES).index
+# doc_len = Index_reader('./indexer/index/', Indexes.SUMMARIES, Index_types.DOCUMENT_LENGTH).index
 
-sc = Scorer(docs_index, len(docs_id_index))
+# sc = Scorer(docs_index, len(docs_id_index))
 
-# dictionary = sc.compute_scores_with_vector_space_model(['bad', 'fight'], 'ltc.ltc')
-dictionary = sc.compute_scores_with_okapi_bm25(['bad', 'fight'], 409.49, doc_len)
-
+# # dictionary = sc.compute_scores_with_vector_space_model(['bad', 'fight'], 'ltc.ltc')
+# dictionary = sc.compute_scores_with_okapi_bm25(['bad', 'fight'], 409.49, doc_len)
 
 
-sorted_items = sorted(dictionary.items(), key=lambda x: x[1], reverse=True)
-top_5 = sorted_items[:5]
 
-docs_id_index = Index_reader('index/', Indexes.DOCUMENTS).index
-print(top_5)
-print(docs_id_index[top_5[0][0]][Indexes.SUMMARIES.value])
+# sorted_items = sorted(dictionary.items(), key=lambda x: x[1], reverse=True)
+# top_5 = sorted_items[:5]
+
+# docs_id_index = Index_reader('index/', Indexes.DOCUMENTS).index
+# print(top_5)
+
+# docs_id_index = Index_reader('./indexer/index/', Indexes.DOCUMENTS).index
+# print(docs_id_index[top_5[0][0]][Indexes.SUMMARIES.value])
 

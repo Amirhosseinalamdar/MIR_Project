@@ -369,23 +369,22 @@ class Index:
 
 
 # TODO: Run the class with needed parameters, then run check methods and finally report the results of check methods
-file_path = "../../IMDB_crawled.json"
+# file_path = "../../IMDB_crawled.json"
 
-def read_first_100_objects(file_path):
-    with open(file_path, "r") as f:
-        all_objects = json.load(f)
-        first_100_objects = all_objects[:100]
-    return first_100_objects
+# def read_first_100_objects(file_path):
+#     with open(file_path, "r") as f:
+#         all_objects = json.load(f)
+#         first_100_objects = all_objects[:100]
+#     return first_100_objects
 
-objects = read_first_100_objects(file_path)
-index = Index(objects)
+# objects = read_first_100_objects(file_path)
+
+
+
+# index = Index(objects)
+
+
 # index.check_add_remove_is_correct()
 # index.check_if_indexing_is_good(index_type = Indexes.SUMMARIES.value)
-index.store_index('./index/'+Indexes.STARS.value+'_index.json', Indexes.STARS.value)
-index.store_index('./index/'+Indexes.SUMMARIES.value+'_index.json', Indexes.SUMMARIES.value)
-index.store_index('./index/'+Indexes.GENRES.value+'_index.json', Indexes.GENRES.value)
-index.store_index('./index/'+Indexes.DOCUMENTS.value+'_index.json', Indexes.DOCUMENTS.value)
-
-
-# loaded = index.load_index('./stars.json')
+# loaded = index.load_index('./index/stars_index.json')
 # print(index.check_if_index_loaded_correctly(Indexes.STARS.value, loaded))

@@ -1,7 +1,4 @@
 requests==2.31.0
 bs4==0.0.2
 numpy==1.26.4
-<<<<<<< HEAD
-=======
 spacy==3.7.4
->>>>>>> template/main

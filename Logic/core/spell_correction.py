@@ -139,18 +139,16 @@ class SpellCorrection:
     
 
 
-file_path = "../IMDB_crawled.json"
 
-def read_first_100_objects(file_path):
-    with open(file_path, "r") as f:
-        all_objects = json.load(f)
-        first_100_objects = all_objects[:100]
-    return first_100_objects
+# from indexer.index_reader import Index_reader
+# from  indexer.indexes_enum import Indexes
+# index_docs = Index_reader('./indexer/index/', index_name=Indexes.DOCUMENTS).index
 
-objects = read_first_100_objects(file_path)
-docs = []
-for i in range(100):
-    docs.append(' '.join(objects[i]['summaries']))
+# docs = []
+# for id in index_docs:
+#     docs.append(' '.join(index_docs[id]['summaries']))
 
-sc = SpellCorrection(docs)
-print(sc.spell_check('he'))
+# file_path = "spell_correction_data.json"
+
+# with open(file_path, "w") as json_file:
+#     json.dump(docs, json_file)

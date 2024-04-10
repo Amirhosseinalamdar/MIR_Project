@@ -1,10 +1,10 @@
-from indexes_enum import Indexes, Index_types
-from index_reader import Index_reader
+from .indexes_enum import Indexes, Index_types
+from .index_reader import Index_reader
 import json
 
 
 class Tiered_index:
-    def __init__(self, path="index/"):
+    def __init__(self, path="../Logic/core/indexer/index/"):
         """
         Initializes the Tiered_index.
 
@@ -94,7 +94,7 @@ class Tiered_index:
             json.dump(self.tiered_index[index_name], file, indent=4)
 
 
-if __name__ == "__main__":
-    tiered = Tiered_index(
-        path="index/"
-    )
+# if __name__ == "__main__":
+    # tiered = Tiered_index(
+    #     path="index/"
+    # )
