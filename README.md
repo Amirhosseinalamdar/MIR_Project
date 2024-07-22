@@ -19,6 +19,17 @@ this phase contained three jupyter notebooks and was independent of the final se
 * Bert: Finetuning Bert for the genre classification task. (MLM) 
 
 
+https://github.com/user-attachments/assets/61861608-44c3-4efc-acba-e269c91c8e2b
+
+
+
+
+
+
+
+
+
+
 
 # MIR-2024-Project-template
 <img src="./IMDB_Logo.jpeg" alt="IMDb Logo" width="100%" height="auto" />
