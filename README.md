@@ -1,4 +1,17 @@
-# MIR-2024-Project
+# IMDB Search Engine for MIR course
+     
+## Phase 1: Traditional Search Engine Implementation
+    * Crawled IMDB to collect data for the search engine.
+    * Developed search engine using traditional methods: Vector Space Model | Okapi BM25 | Unigram Language Model        
+## Phase 2: Enhanced Search Results and Content Classification     
+  * Link Analysis: Applied hub and authority scores to improve search result.
+  * Text Embedding: Trained a FastText model for text embeddings.
+  * Content Classification: Developed and evaluated multiple classifiers to categorize content: Support Vector Machine | Naive Bayes | K-Nearest Neighbors | Deep model
+  * Clustering Utilities: Performed several clustering methods on text embeddings to group similar content.
+
+
+
+# MIR-2024-Project-template
 <img src="./IMDB_Logo.jpeg" alt="IMDb Logo" width="100%" height="auto" />
 This is the repository for Modern Information Retrieval Course, Instructed by Dr. Mahdieh Soleymani Baghshah at Sharif University of Technology.
 
