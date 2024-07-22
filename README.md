@@ -1,13 +1,22 @@
 # IMDB Search Engine for MIR course
-     
+#### There are plenty of details in these three phases which are ignored to be as short and simple as possible.
 ## Phase 1: Traditional Search Engine Implementation
-    * Crawled IMDB to collect data for the search engine.
-    * Developed search engine using traditional methods: Vector Space Model | Okapi BM25 | Unigram Language Model        
+* Crawled IMDB to collect data for the search engine. (id, title, link, similar links, MPA, starts, directors, budget, genres, and ... for each movie. around 1000 movie for this phase and 10k for the next phase)
+* Developed search engine using traditional methods: Vector Space Model | Okapi BM25 | Unigram Language Model        
+* Implemented LSG min hash to identify duplicate documents in O(n).
+* Implemented spell correction using crawled text data and singling and jacard similarity method. (also ranking candidates based on tf)
+* Also, evaluating results using retrieval metrics and extracting a snippet for each document given the query.
+  
 ## Phase 2: Enhanced Search Results and Content Classification     
-  * Link Analysis: Applied hub and authority scores to improve search result.
-  * Text Embedding: Trained a FastText model for text embeddings.
-  * Content Classification: Developed and evaluated multiple classifiers to categorize content: Support Vector Machine | Naive Bayes | K-Nearest Neighbors | Deep model
-  * Clustering Utilities: Performed several clustering methods on text embeddings to group similar content.
+* Link Analysis: Applied hub and authority scores to improve search results. (HITS algorithm)
+* Text Embedding: Trained a FastText model for text embeddings. (Skip gram)
+* Content Classification: Developed and evaluated multiple classifiers to categorize content: Support Vector Machine | Naive Bayes | K-Nearest Neighbors | Deep model
+* Clustering Utilities: Performed several clustering methods on text embeddings to group similar content.
+## Phase 3: RAG, Bert, Recommender system
+this phase contained three jupyter notebooks and was independent of the final search engine:
+* RAG and LLM: Used Langchain and Hugginface to feed 10 retrieved documents as context to the LLM model and user prompt. Finally, returning the llm answer to the user given this template. Also, the user prompt is expanded before going into the template, using another llm.
+* Recommender System: multiple algorithms like content-based, Collaborative filtering, and PCA to predict the user ratings of different movies.
+* Bert: Finetuning Bert for the genre classification task. (MLM) 
 
 
 
