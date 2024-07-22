@@ -18,7 +18,9 @@ this phase contained three jupyter notebooks and was independent of the final se
 * Recommender System: multiple algorithms like content-based, Collaborative filtering, and PCA to predict the user ratings of different movies.
 * Bert: Finetuning Bert for the genre classification task. (MLM) 
 
-
+## Example:
+You can see the final results here. Note that phase 3 wasn't integrated in this result. LLM and RAG are just in the notebooks.
+(The number after movie title is the rounded score assigned to that movie.)
 https://github.com/user-attachments/assets/61861608-44c3-4efc-acba-e269c91c8e2b
 
 
